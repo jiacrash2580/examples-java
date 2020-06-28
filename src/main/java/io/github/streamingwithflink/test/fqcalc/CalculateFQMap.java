@@ -1,4 +1,4 @@
-package io.github.streamingwithflink.test;
+package io.github.streamingwithflink.test.fqcalc;
 
 import com.google.gson.internal.LazilyParsedNumber;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;

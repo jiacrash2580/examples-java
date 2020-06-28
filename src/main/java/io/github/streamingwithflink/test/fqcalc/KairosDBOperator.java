@@ -1,4 +1,4 @@
-package io.github.streamingwithflink.test;
+package io.github.streamingwithflink.test.fqcalc;
 
 import java.util.ArrayList;
 import java.util.Date;
