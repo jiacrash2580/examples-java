@@ -16,11 +16,9 @@
 package io.github.streamingwithflink.test;
 
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.apache.flink.api.java.tuple.Tuple;
 import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.TimeCharacteristic;
-import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.RichSinkFunction;
 import org.slf4j.Logger;
@@ -35,15 +33,10 @@ public class FQFlinkTest {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(new Configuration());
         env.setStreamTimeCharacteristic(TimeCharacteristic.ProcessingTime);
 
-        KeyedStream<Tuple3<String, Integer, Long>, Tuple> triggerSlotData = env
-                .addSource(new FQSource())
-                .flatMap(new TriggerInfoMap())
-                .setParallelism(2)
-                .keyBy(0, 1);
-
         FastDateFormat fdf = FastDateFormat.getInstance("HH:mm:ss");
 
-        triggerSlotData
+        env.addSource(new FQSource())
+                .flatMap(new TriggerInfoMap())
                 .flatMap(new CalculateFQMap())
                 .setParallelism(16)
                 .addSink(new RichSinkFunction<Tuple3<String, Long, Double>>() {
@@ -51,7 +44,7 @@ public class FQFlinkTest {
                     public void invoke(Tuple3<String, Long, Double> value, Context context) throws Exception {
                         logger.info("sink code:{} time:{} value:{}", value.f0, fdf.format(value.f1), value.f2);
                     }
-                }).setParallelism(2);
+                });
 
         // execute application
         env.execute("计算降频任务");
