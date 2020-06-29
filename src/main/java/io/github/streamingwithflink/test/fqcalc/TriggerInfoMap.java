@@ -1,4 +1,4 @@
-package io.github.streamingwithflink.test;
+package io.github.streamingwithflink.test.fqcalc;
 
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.java.tuple.Tuple2;
